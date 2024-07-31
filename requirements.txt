@@ -1,10 +1,9 @@
-
-pip install pandas==1.5.3
-pip install nltk==3.8.1
-pip install wordcloud==1.8.2.2
-pip install matplotlib==3.7.2
-pip install numpy==1.24.2
-pip install streamlit==1.25.0
-pip install plotly==5.15.0
-pip install networkx==3.1
-pip install transformers==4.30.0
+pandas==1.5.3
+nltk==3.8.1
+wordcloud==1.8.2.2
+matplotlib==3.7.2
+numpy==1.24.2
+streamlit==1.25.0
+plotly==5.15.0
+networkx==3.1
+transformers==4.30.0
