@@ -1,75 +1,35 @@
 
-
 ---
 
-# 🎬 **Film Pre-Production Analysis App**
+# Film Pre-Production Analysis App
 
-## 🌟 Overview
+## Overview
 
-Welcome to the **Film Pre-Production Analysis App**! Dive into the world of film scripts with our powerful analysis tool designed for filmmakers, screenwriters, and movie enthusiasts. Analyze character interactions, dialogue counts, sentiment, and emotions with interactive visualizations.
+Welcome to the **Film Pre-Production Analysis App**! 🎬 Dive deep into your favorite movie scripts with our powerful tool designed for filmmakers, screenwriters, and movie enthusiasts. This app provides interactive visualizations and detailed insights into character interactions, dialogue counts, sentiment analysis, and emotional breakdowns.
 
-![Film Pre-Production Analysis](https://via.placeholder.com/1200x400?text=Film+Pre-Production+Analysis)
+## 📹 Watch the Demo
 
-## 🚀 Features
+[![Watch the Demo](https://img.youtube.com/vi/YOUR_VIDEO_ID/maxresdefault.jpg)](https://www.youtube.com/watch?v=YOUR_VIDEO_ID)
 
-### **1. Home**
-Get an introduction to the app and its functionalities.
+*Click the video to see the app in action!*
 
-![Home Page](https://via.placeholder.com/600x400?text=Home+Page)
+## Features
 
-### **2. Word Cloud**
-Generate stunning word clouds to visualize positive and negative words from dialogues.
+- **Home**: Introduction and how-to guide.
+- **Word Cloud**: Visualize positive and negative words from dialogues.
+- **Character Names**: Extract and display unique character names.
+- **Character Dialogue Counts**: Count and display dialogues for each character.
+- **Character Scene Counts**: Analyze and count scenes involving each character.
+- **Bar Graph on Dialogue Count**: Interactive bar graph for dialogue counts.
+- **Bar Graph on Scene Count**: Interactive bar graph for scene counts.
+- **Character Interactions**: Analyze and display character interactions.
+- **Character Relationships**: Graphical representation of character relationships.
+- **Character Emotion Analysis**: Analyze and visualize character emotions.
+- **Text Emotion Analysis**: Analyze and visualize emotions from a given text.
 
-![Word Cloud](https://via.placeholder.com/600x400?text=Word+Cloud)
+## Installation
 
-### **3. Character Names**
-Extract and display unique character names from the script.
-
-![Character Names](https://via.placeholder.com/600x400?text=Character+Names)
-
-### **4. Character Dialogue Counts**
-Count and visualize the number of dialogues for each character.
-
-![Character Dialogue Counts](https://via.placeholder.com/600x400?text=Dialogue+Counts)
-
-### **5. Character Scene Counts**
-Analyze and count the number of scenes involving each character.
-
-![Character Scene Counts](https://via.placeholder.com/600x400?text=Scene+Counts)
-
-### **6. Bar Graph on Dialogue Count**
-Interactive bar graph showing the dialogue counts for each character.
-
-![Bar Graph on Dialogue Count](https://via.placeholder.com/600x400?text=Dialogue+Bar+Graph)
-
-### **7. Bar Graph on Scene Count**
-Interactive bar graph showing the scene counts for each character.
-
-![Bar Graph on Scene Count](https://via.placeholder.com/600x400?text=Scene+Bar+Graph)
-
-### **8. Character Interactions**
-Analyze and display interactions between characters.
-
-![Character Interactions](https://via.placeholder.com/600x400?text=Character+Interactions)
-
-### **9. Character Relationships**
-View a graphical representation of character relationships.
-
-![Character Relationships](https://via.placeholder.com/600x400?text=Character+Relationships)
-
-### **10. Character Emotion Analysis**
-Analyze and visualize character emotions throughout the script.
-
-![Character Emotion Analysis](https://via.placeholder.com/600x400?text=Character+Emotion+Analysis)
-
-### **11. Text Emotion Analysis**
-Analyze and visualize emotions from any text input.
-
-![Text Emotion Analysis](https://via.placeholder.com/600x400?text=Text+Emotion+Analysis)
-
-## 📥 Installation
-
-To run this app locally:
+To run this app locally, follow these steps:
 
 1. **Clone the Repository:**
    ```bash
@@ -93,16 +53,25 @@ To run this app locally:
    streamlit run app.py
    ```
 
-## 📊 Usage
+## Usage
 
 1. **Upload CSV File:**
-   - Navigate to the relevant page (e.g., Word Cloud, Character Names).
-   - Upload your CSV file with movie data, including columns like `Scene_Dialogue` and `Scene_Characters`.
+   - Navigate to the desired feature page (e.g., Word Cloud, Character Names).
+   - Upload a CSV file containing your movie data. Ensure it includes columns like `Scene_Dialogue` and `Scene_Characters`.
 
 2. **Explore Features:**
-   - Utilize the interactive features to analyze dialogues, scenes, emotions, and character interactions.
+   - **Word Cloud**: Analyze and visualize positive and negative words.
+   - **Character Names**: View unique character names.
+   - **Character Dialogue Counts**: See dialogue counts for each character.
+   - **Character Scene Counts**: View scene counts for each character.
+   - **Bar Graph on Dialogue Count**: Compare dialogue counts across characters.
+   - **Bar Graph on Scene Count**: Compare scene counts across characters.
+   - **Character Interactions**: Analyze character interactions.
+   - **Character Relationships**: View relationships in a graphical format.
+   - **Character Emotion Analysis**: Analyze character emotions.
+   - **Text Emotion Analysis**: Analyze emotions from a given text.
 
-## 📋 Dependencies
+## Dependencies
 
 - `pandas`
 - `re`
@@ -115,15 +84,13 @@ To run this app locally:
 - `networkx`
 - `transformers`
 
-## 📝 License
+## License
 
 This project is licensed under the MIT License. See the [LICENSE](License) file for details.
 
-## 🤝 Contributing
+## Contributing
 
-Contributions are welcome! Please fork the repository and submit a pull request with your changes.
-
-
+We welcome contributions to this project! Please fork the repository and submit a pull request with your changes.
 
 
 
