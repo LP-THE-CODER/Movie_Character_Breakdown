@@ -17,6 +17,13 @@ Welcome to the **Film Pre-Production Analysis App**! 🎬 Dive deep into your fa
 
 [Click here to watch the demo video](https://lp-the-coder.github.io/Movie_Character_Breakdown/demo.mp4)
 
+## 🎥 Live Demo
+
+You can explore the live demo of the Film Pre-production Analysis app here: [View Live Demo](https://movie-character-breakdown-lp.streamlit.app/)
+
+Click the link above to interact with the application and experience its features.
+
+
 
 ## Features
 
