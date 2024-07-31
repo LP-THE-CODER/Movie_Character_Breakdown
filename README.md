@@ -33,8 +33,8 @@ To run this app locally, follow these steps:
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/your-username/film-preproduction-analysis.git
-   cd film-preproduction-analysis
+   git clone https://github.com/LP-THE-CODER/Movie_Character_Breakdown.git
+   cd Movie_Character_Breakdown
    ```
 
 2. **Create and Activate a Virtual Environment:**
@@ -50,7 +50,7 @@ To run this app locally, follow these steps:
 
 4. **Run the App:**
    ```bash
-   streamlit run app.py
+   streamlit run deadpool.py
    ```
 
 ## Usage
