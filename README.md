@@ -9,9 +9,10 @@ Welcome to the **Film Pre-Production Analysis App**! 🎬 Dive deep into your fa
 
 ## 📹 Watch the Demo
 
-[![Watch the Demo](https://github.com/LP-THE-CODER/Movie_Character_Breakdown/blob/main/demo.mp4)
+[Click here to watch the demo video](https://github.com/LP-THE-CODER/Movie_Character_Breakdown/raw/main/demo.mp4)
 
-*Click the video to see the app in action!*
+*Click the link to view the demo video!*
+
 
 ## Features
 
