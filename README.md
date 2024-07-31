@@ -11,15 +11,9 @@ Welcome to the **Film Pre-Production Analysis App**! 🎬 Dive deep into your fa
 
 ## 📹 Watch the Demo
 
-Click the video below to watch the demo video of the Movie Character Breakdown application!
-
-[![Watch the Demo](![image](https://github.com/user-attachments/assets/f903044d-3cc5-4d68-9b2c-01113ea564e6)
-)](https://lp-the-coder.github.io/Movie_Character_Breakdown/demo.mp4)
-
-*Click the image above or the link below to view the demo video!*
+*Click the link below to view the demo video!*
 
 [Click here to watch the demo video](https://lp-the-coder.github.io/Movie_Character_Breakdown/demo.mp4)
-
 
 
 ## Features
