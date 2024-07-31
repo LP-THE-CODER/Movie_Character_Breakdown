@@ -1,3 +1,5 @@
+pip install --upgrade pip
+
 pandas==1.5.3
 nltk==3.8.1
 wordcloud==1.8.2.2
