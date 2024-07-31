@@ -1,4 +1,3 @@
-
 import pandas as pd
 import re
 import nltk
@@ -10,45 +9,27 @@ nltk.download('punkt')
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from nltk.tokenize import word_tokenize
 import streamlit as st
-import plotly.graph_objects as go
 import plotly.express as px
+import plotly.graph_objects as go
 import networkx as nx
-import tempfile
-import os
 from transformers import pipeline
 
 # Function to perform sentiment analysis on dialogues
 def perform_sentiment_analysis(dialogues):
-    # Tokenize the dialogues
     tokens = word_tokenize(dialogues)
-   
-    # Perform sentiment analysis using Vader
     sid = SentimentIntensityAnalyzer()
     sentiments = [sid.polarity_scores(word)['compound'] for word in tokens]
-   
-    # Combine words and sentiments
     word_sentiments = list(zip(tokens, sentiments))
-   
-    # Separate positive and negative words
     positive_words = [word for word, sentiment in word_sentiments if sentiment > 0]
     negative_words = [word for word, sentiment in word_sentiments if sentiment < 0]
-   
     return positive_words, negative_words
 
 # Function to generate word cloud
 def generate_word_cloud(words1, words2, title1, title2):
-    # Join words into a single string
     text1 = ' '.join(words1)
     text2 = ' '.join(words2)
-   
-    # Create two word clouds
-    wordcloud1 = WordCloud(width=500, height=300, background_color="white", colormap='hsv_r')
-    wordcloud1.generate_from_text(text1)
-
-    wordcloud2 = WordCloud(width=500, height=300, background_color="black", colormap='hsv_r')
-    wordcloud2.generate_from_text(text2)
-   
-    # Display the word clouds side by side
+    wordcloud1 = WordCloud(width=500, height=300, background_color="white").generate(text1)
+    wordcloud2 = WordCloud(width=500, height=300, background_color="black").generate(text2)
     col1, col2 = st.columns(2)
     with col1:
         st.image(wordcloud1.to_array(), caption=title1, use_column_width=True)
@@ -58,89 +39,63 @@ def generate_word_cloud(words1, words2, title1, title2):
 # Function to count dialogues for a specific character
 def count_dialogues_for_character(df, character_name):
     dialogues_count = 0
-
-    # Iterate through each row in the DataFrame
     for index, row in df.iterrows():
         scene_dialogues = row["Scene_Dialogue"]
         if pd.notnull(scene_dialogues):
-            # Use regular expression to find character names in dialogues
             character_dialogues = re.findall(r"\b" + re.escape(character_name) + r"\b", scene_dialogues, flags=re.IGNORECASE)
             dialogues_count += len(character_dialogues)
-
     return dialogues_count
 
 # Function to count scenes for a specific character
 def count_scenes_for_character(df, character_name):
     scenes_count = 0
-
-    # Iterate through each row in the DataFrame
     for index, row in df.iterrows():
         scene_characters = row["Scene_Characters"]
         if pd.notnull(scene_characters):
-            # Use regular expression to find character names in scene characters
             if re.search(r"\b" + re.escape(character_name) + r"\b", scene_characters, flags=re.IGNORECASE):
                 scenes_count += 1
-
     return scenes_count
 
 # Function to analyze character relationships
 def analyze_relationships(df):
     relationships = {}
-
-    # Iterate through each row in the DataFrame
     for index, row in df.iterrows():
         scene_characters = row["Scene_Characters"]
         if pd.notnull(scene_characters):
-            # Split the scene_characters into a list of characters
             characters = [character.strip() for character in scene_characters.split(",")]
-            # Update relationships dictionary
             for character1 in characters:
                 for character2 in characters:
                     if character1 != character2:
                         key = (character1, character2)
-                        # Increment the interaction count between character1 and character2
                         if key not in relationships:
                             relationships[key] = 1
                         else:
                             relationships[key] += 1
-
     return relationships
 
 # Function to count scenes for each character
 def count_scenes_per_character(df):
     scenes_count = {}
-
-    # Iterate through each row in the DataFrame
     for index, row in df.iterrows():
         scene_characters = row["Scene_Characters"]
         if pd.notnull(scene_characters):
-            # Split the scene_characters into a list of characters
             characters = [character.strip() for character in scene_characters.split(",")]
-            # Update the scenes count for each character
             for character in characters:
                 scenes_count[character] = scenes_count.get(character, 0) + 1
-
     return scenes_count
-
 
 def split_text_into_lines(texts):
     return texts.splitlines()
-    
+
 # Main Streamlit app
 def main():
-    st.set_page_config(
-        page_title="Film Pre-production Analysis",
-        page_icon="🎬",
-        layout="centered",
-        initial_sidebar_state="expanded",
-    )
+    st.set_page_config(page_title="Film Pre-production Analysis", page_icon="🎬", layout="centered", initial_sidebar_state="expanded")
     html_temp = """
     <div style="background-color:#004466;padding:10px;border-radius:10px;margin-bottom:20px;">
     <h1 style="color:WHITE;text-align:center;"> Film Pre-Production Analysis  🎥 </h1>
     </div>
     """
     st.markdown(html_temp, unsafe_allow_html=True)
-
     st.sidebar.title("Navigation")
     page_options = ["Home", "Word Cloud", "Character Names", "Character Dialogue Counts", "Character Scene Counts", "Bar Graph on Dialogue Count", "Bar Graph on Scene Count", "Character Interactions", "Character Relationships", "Character Emotion Analysis", "Text Emotion Analysis"]
     page = st.sidebar.radio("Go to", page_options, index=0, help="Select a page to navigate to")
@@ -171,239 +126,149 @@ def main():
 
             Upload your CSV file now and embark on a journey to unravel the mysteries behind your favorite movie characters. Whether you're a filmmaker seeking deeper insights or a fan looking to explore character dynamics, our app has everything you need for an enriching analysis experience.
             """)
-   
+
     elif page == "Word Cloud":
         st.subheader("WordCloud for Positive 😌 and Negative Words 😱")
         uploaded_file = st.file_uploader("Upload a CSV file containing movie data", type="csv")
         if uploaded_file is not None:
             df = pd.read_csv(uploaded_file)
-            all_dialogues = ' '.join(df['Scene_Dialogue'].dropna())
-            positive_words, negative_words = perform_sentiment_analysis(all_dialogues)
-            generate_word_cloud(positive_words, negative_words, "✅Positive Words", "🤬Negative Words")
+            if 'Scene_Dialogue' in df.columns:
+                all_dialogues = ' '.join(df['Scene_Dialogue'].dropna())
+                positive_words, negative_words = perform_sentiment_analysis(all_dialogues)
+                generate_word_cloud(positive_words, negative_words, "✅Positive Words", "🤬Negative Words")
+            else:
+                st.error("CSV file does not contain 'Scene_Dialogue' column")
 
     elif page == "Character Names":
         st.subheader("Character Names 😏")
         uploaded_file = st.file_uploader("Upload a CSV file containing movie data", type="csv")
         if uploaded_file is not None:
             df = pd.read_csv(uploaded_file)
-            character_names = set()
-            for scene_characters in df["Scene_Characters"]:
-                if pd.notnull(scene_characters):
-                    names = re.findall(r"\b[A-Z][a-zA-Z\s]+\b", scene_characters)
-                    character_names.update(names)
-            character_names = list(character_names)
-            st.write("Character Names:", character_names)
+            if 'Scene_Characters' in df.columns:
+                character_names = set()
+                for scene_characters in df["Scene_Characters"]:
+                    if pd.notnull(scene_characters):
+                        names = re.findall(r"\b[A-Z][a-zA-Z\s]+\b", scene_characters)
+                        character_names.update(names)
+                character_names = list(character_names)
+                st.write("Character Names:", character_names)
+            else:
+                st.error("CSV file does not contain 'Scene_Characters' column")
 
     elif page == "Character Dialogue Counts":
         st.subheader("Character Dialogue Analysis 🗣")
         uploaded_file = st.file_uploader("Upload a CSV file containing movie data", type="csv")
         if uploaded_file is not None:
             df = pd.read_csv(uploaded_file)
-            # Dictionary to store the dialogue counts for each character
-            character_dialogue_counts = {}
-            # Iterate through the DataFrame and count the dialogues for each character
-            for index, row in df.iterrows():
-                characters = row['Scene_Characters']
-                if pd.notnull(characters):
-                    characters = characters.split(", ")
-                    for character in characters:
-                        character_name = character.strip("[]")
-                        if character_name in character_dialogue_counts:
-                            character_dialogue_counts[character_name] += 1
-                        else:
-                            character_dialogue_counts[character_name] = 1
-            # Display the dialogue counts for each character
-            st.write("Number of dialogues for each character:")
-            for character, count in character_dialogue_counts.items():
-                st.write(f"{character}: {count} dialogues")
+            if 'Scene_Dialogue' in df.columns:
+                character_name = st.text_input("Enter the character's name:")
+                if character_name:
+                    dialogues_count = count_dialogues_for_character(df, character_name)
+                    st.write(f"{character_name} has {dialogues_count} dialogues in the movie.")
+            else:
+                st.error("CSV file does not contain 'Scene_Dialogue' column")
 
-                        
     elif page == "Character Scene Counts":
-        st.subheader("Character Scene Analysis 🎞")
+        st.subheader("Character Scene Count 🎬")
         uploaded_file = st.file_uploader("Upload a CSV file containing movie data", type="csv")
         if uploaded_file is not None:
             df = pd.read_csv(uploaded_file)
-            # Calculate the number of scenes for each character
-            character_scenes_count = count_scenes_per_character(df)
-            # Sum up the counts for each character
-            total_scenes_count = {}
-            for character, count in character_scenes_count.items():
-                character_name = character.strip("[]")  # Remove brackets from character name
-                total_scenes_count[character_name] = total_scenes_count.get(character_name, 0) + count
-            # Display the total number of scenes for each character
-            st.write("Total Scenes Count for Each Character:")
-            for character, count in total_scenes_count.items():
-                st.write(f"{character}: {count} scenes")
-            
+            if 'Scene_Characters' in df.columns:
+                character_name = st.text_input("Enter the character's name:")
+                if character_name:
+                    scenes_count = count_scenes_for_character(df, character_name)
+                    st.write(f"{character_name} appears in {scenes_count} scenes in the movie.")
+            else:
+                st.error("CSV file does not contain 'Scene_Characters' column")
 
     elif page == "Bar Graph on Dialogue Count":
-        st.subheader("Dialogue Counts for Each Character")
+        st.subheader("Character Dialogue Count")
         uploaded_file = st.file_uploader("Upload a CSV file containing movie data", type="csv")
         if uploaded_file is not None:
             df = pd.read_csv(uploaded_file)
-            character_dialogue_counts = {}
-            # Iterate through the DataFrame and count the dialogues for each character
-            for index, row in df.iterrows():
-                characters = row['Scene_Characters']
-                if pd.notnull(characters):
-                    characters = characters.split(", ")
-                    for character in characters:
-                        character_name = character.strip("[]")
-                        if character_name in character_dialogue_counts:
-                            character_dialogue_counts[character_name] += 1
-                        else:
-                            character_dialogue_counts[character_name] = 1
-            # Convert the dialogue counts dictionary to a DataFrame
-            dialogue_counts_df = pd.DataFrame(list(character_dialogue_counts.items()), columns=["Character", "Dialogue Count"])
-            # Create a bar graph using Plotly Express
-            fig = px.bar(dialogue_counts_df, x="Character", y="Dialogue Count", title="Number of Dialogues for Each Character",
-                         color_discrete_sequence=["blue"])  # Set the color to orange
-            # Add text annotations for each bar
-            fig.update_traces(texttemplate='%{y}', textposition='outside')
-            # Show the plot
-            st.plotly_chart(fig)
-
+            if 'Scene_Dialogue' in df.columns:
+                characters = st.multiselect("Select characters", df['Scene_Characters'].unique())
+                if characters:
+                    dialogue_counts = {character: count_dialogues_for_character(df, character) for character in characters}
+                    fig = px.bar(x=list(dialogue_counts.keys()), y=list(dialogue_counts.values()), labels={'x': 'Character', 'y': 'Dialogue Count'}, title="Dialogue Count per Character")
+                    st.plotly_chart(fig)
+            else:
+                st.error("CSV file does not contain 'Scene_Dialogue' column")
 
     elif page == "Bar Graph on Scene Count":
-        st.subheader("Scene Counts for Each Character")
+        st.subheader("Character Scene Count")
         uploaded_file = st.file_uploader("Upload a CSV file containing movie data", type="csv")
         if uploaded_file is not None:
             df = pd.read_csv(uploaded_file)
-            # Calculate the number of scenes for each character
-            character_scenes_count = count_scenes_per_character(df)
-            # Sum up the counts for each character
-            total_scenes_count = {}
-            for character, count in character_scenes_count.items():
-                character_name = character.strip("[]")  # Remove brackets from character name
-                total_scenes_count[character_name] = total_scenes_count.get(character_name, 0) + count
-            # Convert the total scenes count dictionary to a DataFrame
-            scenes_counts_df = pd.DataFrame(list(total_scenes_count.items()), columns=["Character", "Scenes Count"])
-            # Create a bar graph using Plotly Express
-            fig = px.bar(scenes_counts_df, x="Character", y="Scenes Count", title="Total Scenes Count for Each Character",
-                         color_discrete_sequence=["black"])  # Set the color to blue
-            # Add text annotations for each bar
-            fig.update_traces(texttemplate='%{y}', textposition='outside')
-            # Show the plot
-            st.plotly_chart(fig)
+            if 'Scene_Characters' in df.columns:
+                scenes_count = count_scenes_per_character(df)
+                fig = px.bar(x=list(scenes_count.keys()), y=list(scenes_count.values()), labels={'x': 'Character', 'y': 'Scene Count'}, title="Scene Count per Character")
+                st.plotly_chart(fig)
+            else:
+                st.error("CSV file does not contain 'Scene_Characters' column")
 
     elif page == "Character Interactions":
-        st.subheader("Character Interactions/Relationships Analysis 🤝🏻")
+        st.subheader("Character Interactions 🔄")
         uploaded_file = st.file_uploader("Upload a CSV file containing movie data", type="csv")
         if uploaded_file is not None:
             df = pd.read_csv(uploaded_file)
-            # Analyze relationships for all characters
-            character_relationships = analyze_relationships(df)
-            # Display character interactions
-            st.write("Character Relationships:")
-            for characters, count in character_relationships.items():
-                character1, character2 = characters
-                # Remove brackets from character names if present
-                character1 = character1.strip("[]")
-                character2 = character2.strip("[]")
-                st.write(f"{character1} - {character2}: {count} interactions")
-    
+            if 'Scene_Characters' in df.columns:
+                relationships = analyze_relationships(df)
+                character1 = st.selectbox("Select the first character", df['Scene_Characters'].unique())
+                character2 = st.selectbox("Select the second character", df['Scene_Characters'].unique())
+                if character1 and character2:
+                    interaction_count = relationships.get((character1, character2), 0)
+                    st.write(f"{character1} and {character2} interact in {interaction_count} scenes.")
+            else:
+                st.error("CSV file does not contain 'Scene_Characters' column")
 
     elif page == "Character Relationships":
-        st.title("Character Relationships Graph")
-        st.write("Below is the graph showing character relationships:")
-        # Path to your PNG file
-        image_path = "deadpool_relationships.png"
-        # Display the image
-        st.image(image_path, use_column_width=True)
+        st.subheader("Character Relationships ❤️")
+        uploaded_file = st.file_uploader("Upload a CSV file containing movie data", type="csv")
+        if uploaded_file is not None:
+            df = pd.read_csv(uploaded_file)
+            if 'Scene_Characters' in df.columns:
+                relationships = analyze_relationships(df)
+                characters = st.multiselect("Select characters", df['Scene_Characters'].unique())
+                if characters:
+                    relationship_counts = {(character1, character2): count for (character1, character2), count in relationships.items() if character1 in characters and character2 in characters}
+                    fig = go.Figure()
+                    for (character1, character2), count in relationship_counts.items():
+                        fig.add_trace(go.Bar(name=f'{character1} and {character2}', x=[f'{character1} and {character2}'], y=[count]))
+                    fig.update_layout(barmode='stack', title="Character Relationships", xaxis_title="Characters", yaxis_title="Number of Scenes Together")
+                    st.plotly_chart(fig)
+            else:
+                st.error("CSV file does not contain 'Scene_Characters' column")
 
-    
     elif page == "Character Emotion Analysis":
-        st.title("Character Emotion Graph")
-        st.write("Below is the graph showing character emotion:")
-        # Path to your PNG file
-        image_path = "deadpool_relationships_emotions.png"
-        # Display the image
-        st.image(image_path, use_column_width=True)
- 
+        st.subheader("Character Emotion Analysis")
+        emotion_analysis = pipeline("text-classification", model="bhadresh-savani/distilbert-base-uncased-emotion", return_all_scores=True)
+        uploaded_file = st.file_uploader("Upload a CSV file containing movie data", type="csv")
+        if uploaded_file is not None:
+            df = pd.read_csv(uploaded_file)
+            if 'Scene_Dialogue' in df.columns:
+                character_name = st.text_input("Enter the character's name:")
+                if character_name:
+                    character_dialogues = df[df["Scene_Dialogue"].str.contains(character_name, na=False, case=False)]["Scene_Dialogue"]
+                    all_dialogues = ' '.join(character_dialogues.dropna())
+                    emotion_scores = emotion_analysis(all_dialogues)
+                    emotion_labels = [score['label'] for score in emotion_scores[0]]
+                    emotion_values = [score['score'] for score in emotion_scores[0]]
+                    fig = px.pie(values=emotion_values, names=emotion_labels, title=f"Emotion Distribution for {character_name}")
+                    st.plotly_chart(fig)
+            else:
+                st.error("CSV file does not contain 'Scene_Dialogue' column")
 
     elif page == "Text Emotion Analysis":
-        st.title("Text Emotion Analysis")
-        # Get user input text
-        if st.button("Analyze Emotions"):
-            # Split text into lines
-            texts = """ The story begins with Wade Wilson (Ryan Reynolds), a former Special Forces operative turned mercenary, living a rough but relatively content life in New York City. He spends his days taking small-time jobs, protecting teenage girls from stalkers, and generally keeping a low profile. Wade frequents Sister Margaret's School for Wayward Girls, a local bar where mercenaries hang out and take on jobs. The bar is run by his best friend, Weasel (T.J. Miller).
-
-            One night at the bar, Wade meets Vanessa Carlysle (Morena Baccarin), a prostitute with a sharp wit. The two quickly hit it off, beginning a whirlwind romance filled with humor, adventure, and love. Vanessa and Wade's relationship deepens, and just as Wade is about to propose, he is diagnosed with terminal cancer. Devastated, Wade struggles with the idea of leaving Vanessa behind.
-
-            In desperation, Wade is approached by a mysterious recruiter (Jed Rees) who offers him a cure for his cancer through a secret experimental program. The program, run by Ajax (Ed Skrein) and Angel Dust (Gina Carano), promises not only to cure Wade but also to give him extraordinary abilities. Although skeptical, Wade decides to undergo the procedure to save his life and stay with Vanessa.
-
-            The procedure is brutal and torturous. Ajax, whose real name is Francis, and Angel Dust subject Wade to intense physical and psychological abuse, attempting to awaken any dormant mutant genes within him. The treatment involves injecting a serum and then exposing him to extreme stress to trigger a mutation. Ajax reveals that they are not heroes but are creating super slaves to be sold as living weapons. Wade's mutation eventually kicks in, giving him superhuman healing abilities but leaving him horribly disfigured with a scarred face and body.
-
-            Fueled by anger and a desire for revenge, Wade adopts the alter ego "Deadpool." He escapes the facility by causing an explosion and vows to hunt down Ajax to force him to fix his disfigurement. Believing he is too hideous for Vanessa to love him, Wade keeps his survival a secret from her, despite still watching over her from afar.
-
-            Wade dons a red suit and mask to hide his appearance and embarks on a mission to find Ajax. He goes on a rampage through the criminal underworld, torturing and interrogating anyone who might know Ajax's whereabouts. During this time, he encounters Colossus (voiced by Stefan Kapičić) and Negasonic Teenage Warhead (Brianna Hildebrand), members of the X-Men. Colossus tries to recruit Deadpool to join the X-Men and use his powers for good, but Deadpool rejects the offer, preferring his own methods of justice.
-
-            Deadpool finally tracks Ajax to a convoy and attacks it, leading to a brutal and chaotic highway battle. He kills many of Ajax's henchmen before confronting Ajax himself. Just as Deadpool is about to capture Ajax, Colossus and Negasonic Teenage Warhead intervene, allowing Ajax to escape. Colossus handcuffs Deadpool and tries to convince him to change his ways, but Deadpool cuts off his own hand to escape, knowing it will regenerate later.
-
-            Ajax learns of Deadpool's connection to Vanessa and kidnaps her to lure Deadpool into a trap. Ajax and Angel Dust take Vanessa to a decommissioned helicarrier where they plan to kill her. Deadpool, with the help of Weasel, finds out about the plan and decides to rescue Vanessa. He reluctantly teams up with Colossus and Negasonic Teenage Warhead, who agree to help him in exchange for Deadpool considering joining the X-Men.
-
-            The final showdown takes place at the scrapyard where the helicarrier is located. Deadpool, Colossus, and Negasonic Teenage Warhead fight their way through Ajax's goons. Colossus battles Angel Dust, while Negasonic uses her explosive powers to assist Deadpool. Deadpool confronts Ajax and, after a fierce battle, subdues him. Ajax reveals that there is no cure for Wade's disfigurement, enraging Deadpool further. Despite Colossus's plea to spare Ajax's life and be a true hero, Deadpool kills Ajax, much to Colossus's dismay.
-
-            With Ajax dead, Deadpool frees Vanessa and explains why he disappeared. Vanessa, though initially shocked by Wade's appearance, still loves him. The two reconcile and share a kiss, with Wade feeling hopeful about their future together.
-
-            The movie ends with Deadpool acknowledging his place as an unconventional anti-hero, breaking the fourth wall to speak directly to the audience. He humorously addresses his journey, the love he has for Vanessa, and his acceptance of his new identity. In a post-credits scene, Deadpool teases the audience with the possibility of a sequel and the introduction of a new character, Cable."""
-            pipe = pipeline("text-classification", model="cardiffnlp/twitter-roberta-base-emotion-multilabel-latest", return_all_scores=True)
-            texts = split_text_into_lines(texts)
-            # Initialize emotion lists
-            anger = []
-            anticipation = []
-            disgust = []
-            fear = []
-            joy = []
-            love = []
-            optimism = []
-            pessimism = []
-            sadness = []
-            surprise = []
-            trust = []
-            # Loop through each line of text and analyze emotions
-            for text in texts:
-                emotions = pipe(text)
-                for feel in emotions[0]:
-                    if feel['label'] == 'anger':
-                        anger.append(feel['score'])
-                    elif feel['label'] == 'anticipation':
-                        anticipation.append(feel['score'])
-                    elif feel['label'] == 'disgust':
-                        disgust.append(feel['score'])
-                    elif feel['label'] == 'fear':
-                        fear.append(feel['score'])
-                    elif feel['label'] == 'joy':
-                        joy.append(feel['score'])
-                    elif feel['label'] == 'love':
-                        love.append(feel['score'])
-                    elif feel['label'] == 'optimism':
-                        optimism.append(feel['score'])
-                    elif feel['label'] == 'pessimism':
-                        pessimism.append(feel['score'])
-                    elif feel['label'] == 'sadness':
-                        sadness.append(feel['score'])
-                    elif feel['label'] == 'surprise':
-                        surprise.append(feel['score'])
-                    elif feel['label'] == 'trust':
-                        trust.append(feel['score'])
-            # Create Plotly figure
-            fig = go.Figure()
-            fig.add_trace(go.Scatter(y=anger, mode='lines', name='anger'))
-            fig.add_trace(go.Scatter(y=anticipation, mode='lines', name='anticipation'))
-            fig.add_trace(go.Scatter(y=disgust, mode='lines', name='disgust'))
-            fig.add_trace(go.Scatter(y=fear, mode='lines', name='fear'))
-            fig.add_trace(go.Scatter(y=joy, mode='lines', name='joy'))
-            fig.add_trace(go.Scatter(y=love, mode='lines', name='love'))
-            fig.add_trace(go.Scatter(y=optimism, mode='lines', name='optimism'))
-            fig.add_trace(go.Scatter(y=pessimism, mode='lines', name='pessimism'))
-            fig.add_trace(go.Scatter(y=sadness, mode='lines', name='sadness'))
-            fig.add_trace(go.Scatter(y=surprise, mode='lines', name='surprise'))
-            fig.add_trace(go.Scatter(y=trust, mode='lines', name='trust'))
-            # Display Plotly figure
+        st.subheader("Text Emotion Analysis")
+        emotion_analysis = pipeline("text-classification", model="bhadresh-savani/distilbert-base-uncased-emotion", return_all_scores=True)
+        input_text = st.text_area("Enter text for emotion analysis")
+        if input_text:
+            emotion_scores = emotion_analysis(input_text)
+            emotion_labels = [score['label'] for score in emotion_scores[0]]
+            emotion_values = [score['score'] for score in emotion_scores[0]]
+            fig = px.pie(values=emotion_values, names=emotion_labels, title="Emotion Distribution for Input Text")
             st.plotly_chart(fig)
 
-
-# Run the Streamlit app
 if __name__ == "__main__":
     main()
