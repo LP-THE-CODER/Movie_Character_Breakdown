@@ -3,7 +3,7 @@
 
 # Film Pre-Production Analysis App
 
-# Movie Character Breakdown
+# Understanding The Script
 
 ![Script Image](https://github.com/LP-THE-CODER/Movie_Character_Breakdown/raw/main/script.png)
 
