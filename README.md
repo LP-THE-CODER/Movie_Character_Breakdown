@@ -3,6 +3,12 @@
 
 # Film Pre-Production Analysis App
 
+# Movie Character Breakdown
+
+![Script Image](https://github.com/LP-THE-CODER/Movie_Character_Breakdown/raw/main/script.png)
+
+
+
 ## Overview
 
 Welcome to the **Film Pre-Production Analysis App**! 🎬 Dive deep into your favorite movie scripts with our powerful tool designed for filmmakers, screenwriters, and movie enthusiasts. This app provides interactive visualizations and detailed insights into character interactions, dialogue counts, sentiment analysis, and emotional breakdowns.
